@@ -1,0 +1,2 @@
+include ':day02_okhttp', ':day01_zxing', ':day02_eventbus', ':week1_practice', ':day05_retrofit', ':week2_practice', ':day08_cart'
+rootProject.name='MajorFive'
