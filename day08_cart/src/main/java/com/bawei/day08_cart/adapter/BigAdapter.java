@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bawei.day08_cart.MainActivity;
 import com.bawei.day08_cart.R;
 import com.bawei.day08_cart.entity.DataBean;
 
@@ -32,10 +33,12 @@ public class BigAdapter extends RecyclerView.Adapter<BigAdapter.Holder> {
     private Context context;
     private List<DataBean.ResultBean> list;
     public SmallAdapter adapter;
+    private final MainActivity mainActivity;
 
     public BigAdapter(Context context, List<DataBean.ResultBean> list) {
         this.context = context;
         this.list = list;
+        mainActivity = (MainActivity) context;
     }
 
     @NonNull
@@ -49,18 +52,22 @@ public class BigAdapter extends RecyclerView.Adapter<BigAdapter.Holder> {
         holder.check_item_all.setText(list.get(position).getCategoryName());
         List<DataBean.ResultBean.ShoppingCartListBean> shoppingCartList = list.get(position).getShoppingCartList();
         holder.small_recycler.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new SmallAdapter(context, shoppingCartList, position, list);
+        adapter = new SmallAdapter(context, shoppingCartList, position);
         holder.small_recycler.setAdapter(adapter);
 
         holder.check_item_all.setChecked(list.get(position).isChecked());
         holder.check_item_all.setOnClickListener(v -> {
             boolean checked = holder.check_item_all.isChecked();
             list.get(position).setChecked(checked);
-            List<DataBean.ResultBean.ShoppingCartListBean> cartList = list.get(position).getShoppingCartList();
-            for (DataBean.ResultBean.ShoppingCartListBean bean : cartList) {
+
+            //条目全选反选
+            for (DataBean.ResultBean.ShoppingCartListBean bean : list.get(position).getShoppingCartList()) {
                 bean.setChecked(checked);
             }
             notifyDataSetChanged();
+
+            //全选反选
+            mainActivity.isAllChecked();
         });
 
         adapter.setCallback((position1, isChecked) -> {

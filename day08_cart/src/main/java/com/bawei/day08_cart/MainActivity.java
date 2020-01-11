@@ -19,6 +19,7 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        EventBus.getDefault().register(this);
         xRecycler.setLayoutManager(new LinearLayoutManager(this));
     }
 
@@ -76,42 +76,37 @@ public class MainActivity extends BaseActivity {
             checkAll.setOnClickListener(v -> {
                 //获取按钮状态
                 boolean checked = checkAll.isChecked();
-
                 for (DataBean.ResultBean resultBean : bean.getResult()) {
-                    for (DataBean.ResultBean.ShoppingCartListBean cartList: resultBean.getShoppingCartList()) {
+                    for (DataBean.ResultBean.ShoppingCartListBean cartList : resultBean.getShoppingCartList()) {
                         cartList.setChecked(checked);
                     }
                     resultBean.setChecked(checked);
                 }
                 adapter.notifyDataSetChanged();
-
-
             });
-
-
-//            adapter.adapter.setBigAllChecked(new SmallAdapter.BigAllChecked() {
-//                @Override
-//                public void back(boolean isChecked) {
-//                    for (DataBean.ResultBean resultBean : bean.getResult()) {
-//                        for (DataBean.ResultBean.ShoppingCartListBean cartList: resultBean.getShoppingCartList()) {
-//                            cartList.setChecked(isChecked);
-//                        }
-//                        resultBean.setChecked(isChecked);
-//                    }
-//                    adapter.notifyDataSetChanged();
-//                }
-//            });
         }
     }
 
-    @Subscribe(sticky = true)
-    public void getState(boolean isChecked){
+    //计算总价
+    public void countPrice() {
+        int allPrice = 0;
         for (DataBean.ResultBean resultBean : bean.getResult()) {
-            for (DataBean.ResultBean.ShoppingCartListBean cartList: resultBean.getShoppingCartList()) {
-                cartList.setChecked(isChecked);
+            for (DataBean.ResultBean.ShoppingCartListBean listBean : resultBean.getShoppingCartList()) {
+                allPrice += listBean.getPrice() * listBean.getNum();
             }
-            resultBean.setChecked(isChecked);
         }
-        adapter.notifyDataSetChanged();
+        textAllPrice.setText("￥" + allPrice);
+    }
+
+    //全选反选
+    public void isAllChecked() {
+        boolean isAllCheck = true;
+        for (DataBean.ResultBean resultBean : bean.getResult()) {
+            for (DataBean.ResultBean.ShoppingCartListBean cartList : resultBean.getShoppingCartList()) {
+                if (!cartList.isChecked()) isAllCheck = false;
+            }
+            if (!resultBean.isChecked()) isAllCheck = false;
+        }
+        checkAll.setChecked(isAllCheck);
     }
 }

@@ -84,6 +84,15 @@ public class DataBean {
             private String pic;
             private int price;
             private boolean isChecked;
+            private int num;
+
+            public int getNum() {
+                return num;
+            }
+
+            public void setNum(int num) {
+                this.num = num;
+            }
 
             public boolean isChecked() {
                 return isChecked;
